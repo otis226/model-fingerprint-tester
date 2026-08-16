@@ -12,65 +12,97 @@
       <div>
         <div class="eyebrow">LOCAL LLM INSPECTOR</div>
         <h1>Model Fingerprint Tester</h1>
-        <p>Gửi request trực tiếp từ local proxy, xem raw JSON, headers và timing.</p>
+        <p>Test model aliases/gateways bằng local proxy. Lưu nhiều model/key, prompt và copy kết quả để phân tích.</p>
       </div>
       <div class="badge">localhost only</div>
     </header>
 
-    <section class="card grid two">
-      <label>
-        <span>API mode</span>
-        <select id="mode">
-          <option value="responses">Responses API</option>
-          <option value="chat">Chat Completions</option>
-          <option value="custom">Custom body</option>
-        </select>
-      </label>
-      <label>
-        <span>Timeout</span>
-        <div class="suffix"><input id="timeout" type="number" min="1" value="300" /><b>sec</b></div>
-      </label>
-      <label class="wide">
-        <span>Endpoint URL</span>
-        <input id="url" value="https://api.vilao.ai/v1/responses" spellcheck="false" />
-      </label>
-      <label>
-        <span>Model</span>
-        <input id="model" value="bami/grok-4.5_console" spellcheck="false" />
-      </label>
-      <label>
-        <span>API key <small>có thể lưu trong localStorage của browser này</small></span>
-        <div class="keyrow"><input id="key" type="password" placeholder="sk-..." autocomplete="off" /><button id="toggleKey" class="ghost small" type="button">Show</button></div>
-      </label>
-      <div class="wide persistence-row">
-        <label class="remember-row">
-          <input id="rememberSettings" type="checkbox" checked />
-          <span>Nhớ cấu hình trên máy này <small>(bao gồm API key)</small></span>
-        </label>
-        <div class="persistence-actions">
-          <span id="saveState" class="save-state muted">Auto-save on</span>
-          <button id="saveNow" class="ghost small" type="button">Save now</button>
-          <button id="forgetSaved" class="danger small" type="button">Forget saved data</button>
+    <section class="card">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">MODEL / API PROFILES</div>
+          <h2>Saved connections</h2>
         </div>
-        <p class="storage-note">Dữ liệu chỉ được lưu trong <code>localStorage</code> của origin <code>127.0.0.1:8787</code>. API key được lưu dạng plaintext trên browser của máy này.</p>
+        <span id="profileCount" class="mini-badge">0 saved</span>
+      </div>
+
+      <div class="profile-toolbar">
+        <select id="profileSelect" aria-label="Saved model profiles">
+          <option value="">— Unsaved current config —</option>
+        </select>
+        <button id="saveProfile" class="primary secondary-primary" type="button">Save profile</button>
+        <button id="saveProfileAs" class="ghost" type="button">Save as new</button>
+        <button id="deleteProfile" class="danger" type="button">Delete</button>
+      </div>
+      <div id="profileDirty" class="dirty-note"></div>
+
+      <div class="grid two padtop">
+        <label>
+          <span>API mode</span>
+          <select id="mode">
+            <option value="responses">Responses API</option>
+            <option value="chat">Chat Completions</option>
+            <option value="custom">Custom body</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Timeout</span>
+          <div class="suffix">
+            <input id="timeout" type="number" min="1" value="300" />
+            <b>sec</b>
+          </div>
+        </label>
+
+        <label class="wide">
+          <span>Endpoint URL</span>
+          <input id="url" value="https://api.vilao.ai/v1/responses" spellcheck="false" />
+        </label>
+
+        <label>
+          <span>Model</span>
+          <input id="model" value="bami/grok-4.5_console" spellcheck="false" />
+        </label>
+
+        <label>
+          <span>API key <small>stored only in this browser's localStorage</small></span>
+          <div class="keyrow">
+            <input id="key" type="password" placeholder="sk-..." autocomplete="off" />
+            <button id="toggleKey" class="ghost small" type="button">Show</button>
+          </div>
+        </label>
+      </div>
+
+      <div class="persistence-row">
+        <div class="persistence-actions">
+          <span id="saveState" class="save-state muted">Local workspace ready</span>
+          <button id="saveNow" class="ghost small" type="button">Save workspace now</button>
+          <button id="forgetSaved" class="danger small" type="button">Delete all local data</button>
+        </div>
+        <p class="storage-note">
+          Profiles, API keys, custom prompts and the current form are stored only in
+          <code>localStorage</code> for <code>127.0.0.1:8787</code>. API keys are plaintext in your browser profile.
+        </p>
       </div>
     </section>
 
     <section class="card">
       <div class="section-head">
         <div>
-          <div class="eyebrow">PROMPT</div>
-          <h2>Test prompt</h2>
+          <div class="eyebrow">PROMPT LIBRARY</div>
+          <h2>Fingerprint prompt</h2>
         </div>
-        <select id="template">
-          <option value="blank">Blank</option>
-          <option value="quick">Quick probe</option>
-          <option value="identity">Compact identity audit</option>
-          <option value="blind">Blinded consistency test</option>
-          <option value="reasoning">Reasoning effort probe</option>
-        </select>
+        <span id="promptCount" class="mini-badge">0 custom</span>
       </div>
-      <textarea id="prompt" rows="16" placeholder="Paste prompt here..."></textarea>
+
+      <div class="prompt-toolbar">
+        <select id="promptLibrary" aria-label="Prompt library"></select>
+        <button id="savePrompt" class="primary secondary-primary" type="button">Save prompt</button>
+        <button id="savePromptAs" class="ghost" type="button">Save as new</button>
+        <button id="deletePrompt" class="danger" type="button">Delete</button>
+      </div>
+
+      <textarea id="prompt" rows="18" placeholder="Paste prompt here..."></textarea>
 
       <details id="advanced" class="advanced">
         <summary>Advanced request fields</summary>
@@ -103,11 +135,27 @@
 
     <section id="statusCard" class="card result hidden">
       <div class="result-head">
-        <div class="statusline">
-          <span id="statusBadge" class="status">IDLE</span>
-          <span id="modelEcho" class="chip"></span>
+        <div>
+          <div class="statusline">
+            <span id="statusBadge" class="status">IDLE</span>
+            <span id="modelEcho" class="chip"></span>
+          </div>
+          <div id="timing" class="timing"></div>
         </div>
-        <div id="timing" class="timing"></div>
+
+        <div class="result-copy-actions">
+          <button id="copyAnalysis" class="primary analysis-button" type="button" disabled>
+            Copy for ChatGPT analysis
+          </button>
+          <button id="copyExtracted" class="ghost" type="button" disabled>
+            Copy extracted text
+          </button>
+        </div>
+      </div>
+
+      <div class="analysis-hint">
+        <b>Copy for ChatGPT analysis</b> gom prompt + model + endpoint + timing + extracted text + raw JSON + response headers.
+        API key không được đưa vào clipboard.
       </div>
 
       <div class="tabs">
@@ -116,6 +164,7 @@
         <button class="tab" data-tab="headers">Headers</button>
         <button class="tab" data-tab="request">Request</button>
       </div>
+
       <div id="pane-text" class="pane active"><pre id="outText"></pre></div>
       <div id="pane-json" class="pane"><pre id="outJson"></pre></div>
       <div id="pane-headers" class="pane"><pre id="outHeaders"></pre></div>
@@ -123,9 +172,10 @@
     </section>
 
     <footer>
-      App chạy local-only. Khi bật “Nhớ cấu hình”, settings và API key được lưu trong localStorage của browser trên máy này.
+      Local-only workspace. Không expose port 8787 ra Internet.
     </footer>
   </main>
+
   <script src="app.js"></script>
 </body>
 </html>

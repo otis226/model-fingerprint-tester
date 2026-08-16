@@ -1,23 +1,15 @@
 # Model Fingerprint Tester
 
-Local-only LLM API inspector for testing model aliases/gateways.
+Local-only LLM API inspector for testing model aliases, gateways and protocol behavior.
 
 ## Run on Windows
 
 Requirements: Node.js 18 or newer.
 
-1. Clone or download this repository.
-2. Double-click `start.bat`.
-3. Open `http://127.0.0.1:8787` if the browser does not open automatically.
-4. Enter endpoint, API key, model name and prompt.
-5. Click **Run test**.
-
-The app can remember your current configuration in the browser's `localStorage`, including the API key, so you do not need to paste it again after restarting the local app.
-
-## Run from terminal
-
 ```bash
-npm start
+git clone https://github.com/otis226/model-fingerprint-tester.git
+cd model-fingerprint-tester
+start.bat
 ```
 
 Then open:
@@ -26,45 +18,88 @@ Then open:
 http://127.0.0.1:8787
 ```
 
-## Local persistence
+Or:
 
-With **Nhớ cấu hình trên máy này** enabled (default), the browser automatically stores:
+```bash
+npm start
+```
 
+## Local workspace
+
+The app stores everything in the browser's `localStorage` for `http://127.0.0.1:8787`.
+
+### Multiple model/API profiles
+
+Save as many connection profiles as you want. Each profile keeps:
+
+- profile name
 - API mode
-- Timeout
-- Endpoint URL
-- Model name
+- timeout
+- endpoint URL
+- model ID / alias
 - API key
-- Selected template and prompt
-- Reasoning effort
-- Max output tokens
-- Extra JSON
-- Custom request body
-- Advanced panel open/closed state
 
-Use **Forget saved data** to remove all saved settings and the API key from localStorage.
+Use **Save profile** to update the currently selected profile, or **Save as new** to create another one.
 
-> Security note: `localStorage` is not encrypted. The API key is stored as plaintext in the local browser profile for `http://127.0.0.1:8787`. Use this only on a computer/browser profile you trust. The local Node server itself does not persist the API key to disk.
+Existing v1 "remember last form" data is migrated automatically into a saved profile on first launch after upgrading.
 
-## Features
+### Prompt library
+
+The app includes built-in fingerprint prompts and lets you save your own prompts locally.
+
+You can:
+
+- select a built-in or custom prompt
+- edit it
+- save/update a custom prompt
+- save the current prompt as a new entry
+- delete custom prompts
+
+Built-in prompts cannot be deleted.
+
+### Copy for ChatGPT analysis
+
+After a test finishes, click **Copy for ChatGPT analysis**.
+
+The clipboard bundle includes:
+
+- requested model
+- selected saved profile name
+- endpoint
+- API mode
+- HTTP status
+- TTFB and total time
+- the test prompt
+- extracted assistant text
+- raw JSON / raw response
+- response headers
+- request body
+
+API keys and sensitive authorization-like response headers are omitted/redacted.
+
+Paste the bundle directly into ChatGPT for model fingerprint analysis.
+
+## Request features
 
 - OpenAI Responses API
 - OpenAI Chat Completions API
 - Custom JSON body
 - Configurable timeout (default 300 seconds)
-- Reasoning effort field accepts arbitrary values for validation probes
-- Extra JSON merge field, e.g. encrypted reasoning include
+- Arbitrary reasoning effort values for validation probes
+- Extra JSON merge field
 - Raw JSON response
-- Upstream response headers
+- Response headers
 - TTFB and total latency
 - Extracted assistant text
 - Copy equivalent cURL command
-- Built-in model fingerprint prompts
-- Automatic local settings persistence
 
-## Security notes
+## Security
 
-- Intended for localhost use only (`127.0.0.1`).
-- The Node server binds to localhost by default.
-- Do not expose port 8787 to the public Internet.
-- Rotate any API key that has already been shared publicly or pasted into logs/chat.
+This tool is intended for a trusted local machine only.
+
+- Node binds to `127.0.0.1`.
+- Do not expose port `8787` publicly.
+- API keys are stored as plaintext in the browser's localStorage.
+- The Node server does not persist API keys to disk.
+- **Delete all local data** removes saved profiles, API keys, prompts and workspace state.
+- Rotate any API key that has already been pasted into a public place, logs, or chat.
