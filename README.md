@@ -1,6 +1,6 @@
 # Model Fingerprint Tester
 
-Local-only LLM API inspector for testing model aliases, gateways and protocol behavior.
+Local-only LLM model investigation console for probing model aliases/gateways, inspecting protocol evidence, keeping repeatable prompts, and copying clean evidence into ChatGPT.
 
 ## Run on Windows
 
@@ -24,11 +24,20 @@ Or:
 npm start
 ```
 
-## Local workspace
+## V2 workspace
 
-The app stores everything in the browser's `localStorage` for `http://127.0.0.1:8787`.
+The main desktop workflow is now optimized around:
 
-### Multiple model/API profiles
+1. Pick a saved connection profile.
+2. Pick or edit a fingerprint prompt.
+3. Run the probe.
+4. Inspect answer / raw JSON / headers / request next to the prompt.
+5. Copy the analysis bundle and paste it into ChatGPT.
+6. Re-open or copy older runs from local **Test history**.
+
+Connection settings are collapsed during normal use so Prompt and Result stay visible together.
+
+## Multiple model/API profiles
 
 Save as many connection profiles as you want. Each profile keeps:
 
@@ -39,45 +48,49 @@ Save as many connection profiles as you want. Each profile keeps:
 - model ID / alias
 - API key
 
-Use **Save profile** to update the currently selected profile, or **Save as new** to create another one.
+Use **Save changes** to update the selected profile or **+ New** to keep another model/key configuration.
 
-Existing v1 "remember last form" data is migrated automatically into a saved profile on first launch after upgrading.
+Existing v1 local settings continue to be migrated into the current workspace.
 
-### Prompt library
+## Prompt library
 
 The app includes built-in fingerprint prompts and lets you save your own prompts locally.
 
-You can:
+You can select, edit, save, duplicate, and delete custom prompts. Built-in prompts are protected from deletion.
 
-- select a built-in or custom prompt
-- edit it
-- save/update a custom prompt
-- save the current prompt as a new entry
-- delete custom prompts
+## Test history
 
-Built-in prompts cannot be deleted.
-
-### Copy for ChatGPT analysis
-
-After a test finishes, click **Copy for ChatGPT analysis**.
-
-The clipboard bundle includes:
+Recent tests are saved in a separate local browser history store. Each entry keeps:
 
 - requested model
-- selected saved profile name
-- endpoint
-- API mode
+- prompt name and prompt text
+- endpoint + API mode
+- HTTP result and timing
+- request body without the API key
+- extracted answer
+- raw response / JSON, subject to a local size cap
+- response headers with authorization/token/cookie-like fields redacted
+
+Use a history row to inspect an older result, or its **Copy** action to copy a ready-to-paste analysis bundle.
+
+History is capped to keep browser `localStorage` usage reasonable.
+
+## Copy for ChatGPT analysis
+
+After a live test finishes, click **Copy for ChatGPT analysis**. The clipboard bundle includes:
+
+- requested model
+- saved profile name
+- prompt name and text
+- endpoint and API mode
 - HTTP status
 - TTFB and total time
-- the test prompt
 - extracted assistant text
 - raw JSON / raw response
 - response headers
 - request body
 
-API keys and sensitive authorization-like response headers are omitted/redacted.
-
-Paste the bundle directly into ChatGPT for model fingerprint analysis.
+API keys and sensitive authorization-like headers are omitted/redacted.
 
 ## Request features
 
@@ -85,13 +98,13 @@ Paste the bundle directly into ChatGPT for model fingerprint analysis.
 - OpenAI Chat Completions API
 - Custom JSON body
 - Configurable timeout (default 300 seconds)
-- Arbitrary reasoning effort values for validation probes
+- Arbitrary reasoning-effort values for validation probes
 - Extra JSON merge field
 - Raw JSON response
 - Response headers
 - TTFB and total latency
 - Extracted assistant text
-- Copy equivalent cURL command
+- Copy cURL
 
 ## Security
 
@@ -99,7 +112,9 @@ This tool is intended for a trusted local machine only.
 
 - Node binds to `127.0.0.1`.
 - Do not expose port `8787` publicly.
-- API keys are stored as plaintext in the browser's localStorage.
+- Profiles, API keys, prompts and workspace state are stored in browser `localStorage`.
+- API keys are plaintext in that browser profile.
+- Test history is stored separately in browser `localStorage` and never includes the API key.
 - The Node server does not persist API keys to disk.
-- **Delete all local data** removes saved profiles, API keys, prompts and workspace state.
+- **Delete all local data** removes the main workspace; the V2 layer also clears its separate history after that action.
 - Rotate any API key that has already been pasted into a public place, logs, or chat.
