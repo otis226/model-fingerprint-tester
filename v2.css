@@ -75,7 +75,7 @@
 .prompt-panel-v2 #run { min-width: 170px; }
 .prompt-panel-v2 #clear { display: none; }
 
-.result-panel-v2.hidden { display: block !important; }
+.result-panel-v2.hidden { display: flex !important; }
 .result-panel-v2 { display: flex !important; flex-direction: column; }
 .result-panel-v2 .result-copy-actions { flex-wrap: wrap; }
 .result-panel-v2 .analysis-button { min-width: 200px; }
@@ -99,7 +99,7 @@
 .history-v2-list { display: grid; gap: 6px; }
 .history-v2-empty { padding: 18px 12px; border: 1px dashed #293250; border-radius: 10px; color: #667493; text-align: center; font-size: 12px; }
 .history-v2-row {
-  display: grid; grid-template-columns: 76px minmax(160px,.7fr) minmax(190px,1fr) auto auto;
+  display: grid; grid-template-columns: 76px minmax(160px,.7fr) minmax(190px,1fr) auto auto auto;
   gap: 12px; align-items: center; width: 100%; padding: 9px 11px;
   border: 1px solid transparent; border-radius: 10px; background: #0a1020; color: inherit; text-align: left;
 }
