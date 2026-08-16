@@ -1,0 +1,208 @@
+/* V2.1 visual polish: reduce competing CTAs and tighten the investigation workflow. */
+
+/* Prompt actions: Run is the only strong CTA in the prompt panel. */
+.prompt-panel-v2 #savePrompt,
+.prompt-panel-v2 #savePromptAs {
+  background: #151b31;
+  border: 1px solid #303a5e;
+  color: #c9d2ec;
+}
+
+.prompt-panel-v2 #savePrompt:hover,
+.prompt-panel-v2 #savePromptAs:hover,
+.prompt-panel-v2 #curl:hover {
+  border-color: #45537d;
+  background: #1a2139;
+}
+
+.prompt-panel-v2 .actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 8;
+  margin: 14px -1px -1px;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(40, 50, 82, .78);
+  background: linear-gradient(180deg, rgba(12, 16, 31, .2), rgba(12, 16, 31, .98) 30%);
+  backdrop-filter: blur(8px);
+}
+
+.prompt-panel-v2 #run {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 184px;
+  box-shadow: 0 8px 28px rgba(83, 112, 255, .22);
+}
+
+.shortcut-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 6px;
+  background: rgba(8, 13, 28, .26);
+  color: rgba(255,255,255,.78);
+  font: 700 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+/* Result header: keep status, model, timing and actions in one compact band. */
+.result-panel-v2 .result-head {
+  align-items: center;
+  gap: 10px;
+}
+
+.result-panel-v2 .result-head > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+}
+
+.result-panel-v2 .statusline {
+  gap: 6px;
+  min-width: 0;
+}
+
+.result-panel-v2 .status,
+.result-panel-v2 .chip {
+  padding: 6px 9px;
+}
+
+.result-panel-v2 .chip {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-panel-v2 .timing {
+  margin: 0;
+  white-space: nowrap;
+  color: #7382a8;
+}
+
+.result-panel-v2 .result-copy-actions {
+  justify-content: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.result-panel-v2 .analysis-button {
+  min-width: 0;
+  padding: 10px 13px;
+}
+
+.result-panel-v2 #copyExtracted,
+.result-panel-v2 #v2CopyJson {
+  min-width: 0;
+  padding: 9px 10px;
+  font-size: 11px;
+}
+
+/* The button labels already explain these actions; the large explanatory box was redundant. */
+.result-panel-v2 .analysis-hint {
+  display: none;
+}
+
+.result-panel-v2 .tabs {
+  margin-top: 14px;
+}
+
+.result-panel-v2 .pane.active {
+  min-height: 455px;
+}
+
+.result-panel-v2 pre {
+  padding-top: 13px;
+}
+
+/* Connection profile stays visually secondary to the actual testing workspace. */
+.connection-card-v2 {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.connection-card-v2 .profile-toolbar button {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.connection-card-v2 .connection-v2-summary {
+  margin-top: 7px;
+}
+
+/* History reads as a set of reusable runs rather than a dense log table. */
+.history-card-v2 {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.history-v2-head {
+  margin-bottom: 8px;
+}
+
+.history-v2-row {
+  min-height: 46px;
+  padding: 9px 12px;
+  border-color: #202944;
+  background: rgba(8, 13, 28, .62);
+}
+
+.history-v2-row:hover {
+  border-color: #3a476d;
+  background: #11182c;
+}
+
+.history-v2-model {
+  font-size: 11px;
+}
+
+.history-v2-status {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+}
+
+.history-v2-copy {
+  border-radius: 7px;
+  padding: 6px 9px;
+}
+
+.history-v2-clear {
+  opacity: .72;
+}
+
+.history-v2-clear:hover {
+  opacity: 1;
+}
+
+@media (max-width: 1220px) {
+  .result-panel-v2 .result-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .result-panel-v2 .result-copy-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .prompt-panel-v2 .actions {
+    position: static;
+    background: transparent;
+    backdrop-filter: none;
+  }
+  .result-panel-v2 .result-copy-actions {
+    width: 100%;
+  }
+  .result-panel-v2 .result-copy-actions > button {
+    flex: 1 1 auto;
+  }
+  .shortcut-hint {
+    display: none;
+  }
+}
