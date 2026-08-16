@@ -1,12 +1,10 @@
 (() => {
   const $ = (id) => document.getElementById(id);
 
-  function polishLabels() {
+  function polishStaticLabels() {
     const savePrompt = $('savePrompt');
     const savePromptAs = $('savePromptAs');
     const run = $('run');
-    const copyAnalysis = $('copyAnalysis');
-    const copyExtracted = $('copyExtracted');
     const copyJson = $('v2CopyJson');
 
     if (savePrompt) {
@@ -28,19 +26,28 @@
       run.title = 'Run test (Ctrl/Cmd + Enter)';
     }
 
+    if (copyJson) {
+      copyJson.textContent = 'Copy JSON';
+      copyJson.title = 'Copy the raw JSON response';
+    }
+  }
+
+  function polishCopyLabels() {
+    const copyAnalysis = $('copyAnalysis');
+    const copyExtracted = $('copyExtracted');
+
     if (copyAnalysis) {
-      copyAnalysis.textContent = 'Copy analysis bundle';
+      if (copyAnalysis.textContent.trim() === 'Copy for ChatGPT analysis') {
+        copyAnalysis.textContent = 'Copy analysis bundle';
+      }
       copyAnalysis.title = 'Copy prompt, model, endpoint, timing, answer, raw response and headers for ChatGPT analysis';
     }
 
     if (copyExtracted) {
-      copyExtracted.textContent = 'Copy answer';
+      if (copyExtracted.textContent.trim() === 'Copy extracted text') {
+        copyExtracted.textContent = 'Copy answer';
+      }
       copyExtracted.title = 'Copy only the extracted assistant response';
-    }
-
-    if (copyJson) {
-      copyJson.textContent = 'Copy JSON';
-      copyJson.title = 'Copy the raw JSON response';
     }
   }
 
@@ -54,14 +61,15 @@
     });
   }
 
-  function keepDynamicLabelsPolished() {
+  function keepCopyLabelsPolished() {
     const resultActions = document.querySelector('.result-copy-actions');
     if (!resultActions) return;
-    const observer = new MutationObserver(() => polishLabels());
-    observer.observe(resultActions, { childList: true, subtree: true });
+    const observer = new MutationObserver(() => polishCopyLabels());
+    observer.observe(resultActions, { childList: true, subtree: true, characterData: true });
   }
 
-  polishLabels();
+  polishStaticLabels();
+  polishCopyLabels();
   installRunShortcut();
-  keepDynamicLabelsPolished();
+  keepCopyLabelsPolished();
 })();
