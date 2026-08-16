@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Model Fingerprint Tester</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">LOCAL LLM INSPECTOR</div>
+        <h1>Model Fingerprint Tester</h1>
+        <p>Gửi request trực tiếp từ local proxy, xem raw JSON, headers và timing.</p>
+      </div>
+      <div class="badge">localhost only</div>
+    </header>
+
+    <section class="card grid two">
+      <label>
+        <span>API mode</span>
+        <select id="mode">
+          <option value="responses">Responses API</option>
+          <option value="chat">Chat Completions</option>
+          <option value="custom">Custom body</option>
+        </select>
+      </label>
+      <label>
+        <span>Timeout</span>
+        <div class="suffix"><input id="timeout" type="number" min="1" value="300" /><b>sec</b></div>
+      </label>
+      <label class="wide">
+        <span>Endpoint URL</span>
+        <input id="url" value="https://api.vilao.ai/v1/responses" spellcheck="false" />
+      </label>
+      <label>
+        <span>Model</span>
+        <input id="model" value="bami/grok-4.5_console" spellcheck="false" />
+      </label>
+      <label>
+        <span>API key <small>có thể lưu trong localStorage của browser này</small></span>
+        <div class="keyrow"><input id="key" type="password" placeholder="sk-..." autocomplete="off" /><button id="toggleKey" class="ghost small" type="button">Show</button></div>
+      </label>
+      <div class="wide persistence-row">
+        <label class="remember-row">
+          <input id="rememberSettings" type="checkbox" checked />
+          <span>Nhớ cấu hình trên máy này <small>(bao gồm API key)</small></span>
+        </label>
+        <div class="persistence-actions">
+          <span id="saveState" class="save-state muted">Auto-save on</span>
+          <button id="saveNow" class="ghost small" type="button">Save now</button>
+          <button id="forgetSaved" class="danger small" type="button">Forget saved data</button>
+        </div>
+        <p class="storage-note">Dữ liệu chỉ được lưu trong <code>localStorage</code> của origin <code>127.0.0.1:8787</code>. API key được lưu dạng plaintext trên browser của máy này.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">PROMPT</div>
+          <h2>Test prompt</h2>
+        </div>
+        <select id="template">
+          <option value="blank">Blank</option>
+          <option value="quick">Quick probe</option>
+          <option value="identity">Compact identity audit</option>
+          <option value="blind">Blinded consistency test</option>
+          <option value="reasoning">Reasoning effort probe</option>
+        </select>
+      </div>
+      <textarea id="prompt" rows="16" placeholder="Paste prompt here..."></textarea>
+
+      <details id="advanced" class="advanced">
+        <summary>Advanced request fields</summary>
+        <div class="grid two padtop">
+          <label>
+            <span>Reasoning effort <small>optional</small></span>
+            <input id="reasoning" placeholder="low / medium / high / xhigh / POTATO_123" />
+          </label>
+          <label>
+            <span>Max output tokens <small>optional</small></span>
+            <input id="maxTokens" type="number" min="1" placeholder="e.g. 4096" />
+          </label>
+          <label class="wide">
+            <span>Extra JSON merged into request body <small>optional</small></span>
+            <textarea id="extraJson" rows="7" spellcheck="false" placeholder='{"include":["reasoning.encrypted_content"]}'></textarea>
+          </label>
+          <label class="wide">
+            <span>Custom body <small>used only in Custom body mode</small></span>
+            <textarea id="customBody" rows="7" spellcheck="false" placeholder='{"model":"...","input":"..."}'></textarea>
+          </label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button id="run" class="primary">⚡ Run test</button>
+        <button id="curl" class="ghost">Copy cURL</button>
+        <button id="clear" class="ghost">Clear result</button>
+      </div>
+    </section>
+
+    <section id="statusCard" class="card result hidden">
+      <div class="result-head">
+        <div class="statusline">
+          <span id="statusBadge" class="status">IDLE</span>
+          <span id="modelEcho" class="chip"></span>
+        </div>
+        <div id="timing" class="timing"></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="text">Extracted text</button>
+        <button class="tab" data-tab="json">Raw JSON</button>
+        <button class="tab" data-tab="headers">Headers</button>
+        <button class="tab" data-tab="request">Request</button>
+      </div>
+      <div id="pane-text" class="pane active"><pre id="outText"></pre></div>
+      <div id="pane-json" class="pane"><pre id="outJson"></pre></div>
+      <div id="pane-headers" class="pane"><pre id="outHeaders"></pre></div>
+      <div id="pane-request" class="pane"><pre id="outRequest"></pre></div>
+    </section>
+
+    <footer>
+      App chạy local-only. Khi bật “Nhớ cấu hình”, settings và API key được lưu trong localStorage của browser trên máy này.
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
